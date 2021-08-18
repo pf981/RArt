@@ -3,7 +3,7 @@ library(tidyverse)
 smooth_points <- function(values, n_out = 800, span = 0.75, ...) {
   x <- seq(from = 0, to = 1, length.out = length(values))
   m <- loess(values ~ x, span = span, ...)
-  predict(m, newdata = tibble(x = seq(from = 0, to = 1, length.out = 800)))
+  predict(m, newdata = tibble(x = seq(from = 0, to = 1, length.out = n_out)))
 }
 
 generate_ribbon_data <- function(n_points) {
