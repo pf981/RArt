@@ -20,7 +20,7 @@ generate_ribbon_data <- function(n_points) {
 
 generate_data <- function(n_ribbons = 5, n_points = 4, min_alpha = 0.5, max_alpha = 0.5) {
   bind_rows(
-    rerun(n_ribbons, generate_loess_data(n_points) %>% mutate(alpha = runif(1, min_alpha, max_alpha))),
+    rerun(n_ribbons, generate_ribbon_data(n_points) %>% mutate(alpha = runif(1, min_alpha, max_alpha))),
     .id = "group"
   )
 }
@@ -36,20 +36,26 @@ plot_data <- function(df) {
     )
 }
 
-create_art <- function(n_ribbons = 5, n_points = 4, min_alpha = 0.5, max_alpha = 0.5, seed) {
-  new_seed <- if (!missing(seed)) seed else sample(1:10000, 1)
-  seed_backup <- get(".Random.seed", .GlobalEnv)
-  message("n_ribbons: ", n_ribbons)
-  message("n_points: ", n_ribbons)
-  message("seed: ", new_seed)
-  set.seed(new_seed)
-  
-  df <- generate_data(n_ribbons = n_ribbons, n_points = n_points, min_alpha = min_alpha, max_alpha = max_alpha)
-  p <- plot_data(df)
-  
-  assign(".Randon.seed", seed_backup, .GlobalEnv)
-  p
+with_seed <- function(f) {
+  function(..., seed) {
+    new_seed <- if (!missing(seed)) seed else sample(1:10000, 1)
+    seed_backup <- get(".Random.seed", .GlobalEnv)
+    set.seed(new_seed)
+    
+    iwalk(list(...), ~message(.y, ": ", .x))
+    message("seed: ", new_seed)
+    
+    result <- f(...)
+    
+    assign(".Randon.seed", seed_backup, .GlobalEnv)
+    result
+  }
 }
+
+create_art <- with_seed(function(n_ribbons = 5, n_points = 4, min_alpha = 0.5, max_alpha = 0.5) {
+  df <- generate_data(n_ribbons = n_ribbons, n_points = n_points, min_alpha = min_alpha, max_alpha = max_alpha)
+  plot_data(df)
+})
 
 save_wallpaper <- function(p, name, folder = "output", width = 2560 * 3, height = 1440, dpi = 700, units = "px", ...) {
   ggsave(
@@ -62,7 +68,6 @@ save_wallpaper <- function(p, name, folder = "output", width = 2560 * 3, height 
     ...
   )
 }
-
 
 save_wallpaper(
   create_art(n_ribbons = 6, n_points = 10, min_alpha = 0.1, max_alpha = 1, seed = 6164),
@@ -77,4 +82,9 @@ save_wallpaper(
 save_wallpaper(
   create_art(n_ribbons = 6, n_points = 10, min_alpha = 0.1, max_alpha = 1, seed = 6164) + scale_fill_brewer(type = "div", palette = 6),
   "loess_waves3_red.png"
+)
+
+save_wallpaper(
+  create_art(seed = 152),
+  "loess_waves4.png"
 )
