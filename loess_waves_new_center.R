@@ -1,24 +1,20 @@
 library(tidyverse)
 
-  
-generate_loess_data <- function(n_points) {
-  p <-
-    tibble(
-      x = seq(from = 0, to = 1, length.out = n_points),
-      y = runif(n_points, 0, 2),
-      center = runif(n_points, -1, 1)
-    ) %>%
-    ggplot() +
-      geom_smooth(mapping = aes(x, y), se = FALSE, method = "loess", formula = y ~ x, n = 800) +
-      geom_smooth(mapping = aes(x, center), se = FALSE, method = "loess", formula = y ~ x, n = 800, span = 1)
-  
-  center <- ggplot_build(p)$data[[2]]$y
-  
-  ggplot_build(p)$data[[1]] %>%
+smooth_points <- function(values, n_out = 800, span = 0.75, ...) {
+  x <- seq(from = 0, to = 1, length.out = length(values))
+  m <- loess(values ~ x, span = span, ...)
+  predict(m, newdata = tibble(x = seq(from = 0, to = 1, length.out = 800)))
+}
+
+generate_ribbon_data <- function(n_points) {
+  tibble(
+    y = runif(n_points, 0, 2) %>% smooth_points(),
+    center = runif(n_points, -1, 1) %>% smooth_points(span = 1)
+  ) %>%
     transmute(
-      x,
-      ymin = -y + center,
-      ymax = y + center
+      x = seq(from = 0, to = 1, length.out = length(y)),
+      ymin = center - y,
+      ymax = center + y
     )
 }
 
@@ -66,6 +62,7 @@ save_wallpaper <- function(p, name, folder = "output", width = 2560 * 3, height 
     ...
   )
 }
+
 
 save_wallpaper(
   create_art(n_ribbons = 6, n_points = 10, min_alpha = 0.1, max_alpha = 1, seed = 6164),
