@@ -25,7 +25,7 @@ generate_nested_ribbon_data <- function(n_points = 4, n_nested = 4, min_alpha = 
       ))
     )
     new_center <- runif(length(center), -1, 1)
-    new_center[filter_fn(new_center, center)]
+    new_center <- new_center[filter_fn(new_center, center)]
     center <- c(center, new_center) %>% smooth_points(span = 1)
     alpha <- alpha * alpha_decay
   }
