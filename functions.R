@@ -34,7 +34,7 @@ with_seed <- function(f) {
     
     result <- f(...)
     
-    assign(".Randon.seed", seed_backup, .GlobalEnv)
+    assign(".Random.seed", seed_backup, .GlobalEnv)
     result
   }
 }
