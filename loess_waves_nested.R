@@ -63,3 +63,8 @@ save_wallpaper(
   create_art(min_alpha = 0, max_alpha = 0.5, seed = 5885),
   "loess_waves_nested2.png"
 )
+
+save_wallpaper(
+  create_art(seed = 4501),
+  "loess_waves_nested3.png"
+)
