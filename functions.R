@@ -79,3 +79,12 @@ random_color_grid <- function(p, nrows = 5, ncols = 5) {
   )
   patchwork::wrap_plots(plots, nrow = nrows, ncol = ncols)
 }
+
+random_plot_grid <- function(f, ..., nrows = 5, ncols = 5) {
+  seed_start <- sample(1:10000, 1)
+  plots <- map(
+    seq_len(nrows * ncols),
+    ~f(..., seed = seed_start + .) + scale_fill_random(seed = seed_start + .) + ggtitle(seed_start + .)
+  )
+  patchwork::wrap_plots(plots, nrow = nrows, ncol = ncols)
+}
