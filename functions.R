@@ -50,3 +50,32 @@ save_wallpaper <- function(p, name, folder = "output", width = 2560 * 3, height 
     ...
   )
 }
+
+scale_fill_random <- with_seed(function(...) {
+  max_palette_colors <- c(RColorBrewer:::divnum, RColorBrewer:::qualnum, RColorBrewer:::seqnum)
+  palettes <- c(
+    imap(max_palette_colors, RColorBrewer::brewer.pal),
+    ggplot = list(scales::hue_pal()(12))
+  )
+  
+  # Note that sample needs to be called here and not in the inner function as the set seed does
+  # not apply to the inner function.
+  palette <- sample(palettes, 1) %>% unlist() %>% unname() %>% sample(500, replace = TRUE)
+  palette_fn <- function(n) rep(palette, length.out = n)
+  
+  discrete_scale(
+    aesthetics = "fill",
+    scale_name = "random",
+    palette_fn,
+    ...
+  )
+})
+
+random_color_grid <- function(p, nrows = 5, ncols = 5) {
+  seed_start <- sample(1:10000, 1)
+  plots <- map(
+    seq_len(nrows * ncols),
+    ~p + scale_fill_random(seed = seed_start + .) + ggtitle(seed_start + .)
+  )
+  patchwork::wrap_plots(plots, nrow = nrows, ncol = ncols)
+}

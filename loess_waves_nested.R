@@ -68,3 +68,11 @@ save_wallpaper(
   create_art(seed = 4501),
   "loess_waves_nested3.png"
 )
+
+# Use this to find candidate seeds
+random_color_grid(create_art())
+
+save_wallpaper(
+  create_art(seed = 4786) + scale_fill_random(seed = 8447),
+  "loess_waves_nested4.png"
+)
