@@ -15,4 +15,4 @@
 ![Loess Waves Nested 1](/output/loess_waves_nested1.png?raw=true "Loess Waves Nested 1")
 ![Loess Waves Nested 2](/output/loess_waves_nested2.png?raw=true "Loess Waves Nested 2")
 ![Loess Waves Nested 3](/output/loess_waves_nested3.png?raw=true "Loess Waves Nested 3")
-![Loess Waves Nested 4](/output/loess_waves_nested3.png?raw=true "Loess Waves Nested 4")
+![Loess Waves Nested 4](/output/loess_waves_nested4.png?raw=true "Loess Waves Nested 4")
