@@ -19,40 +19,61 @@ create_art <- with_seed(function(n_ribbons = 5, n_points = 4, min_alpha = 0.5, m
 p <- create_art(n_ribbons = 6, n_points = 10, min_alpha = 0.1, max_alpha = 1, seed = 6164)
 
 scale_fill_random <- function(...) {
+  max_palette_colors <- c(RColorBrewer:::divnum, RColorBrewer:::qualnum, RColorBrewer:::seqnum)
   palettes <- c(
     imap(max_palette_colors, RColorBrewer::brewer.pal),
     ggplot = list(scales::hue_pal()(12))
   )
-  palette <- sample(palettes, 1) %>% unlist()
   
-  function(n) {
-    
-  }
+  palette <- sample(palettes, 1) %>% unlist() %>% unname()
+  palette_fn <- function(n) sample(palette, n, replace = TRUE)
+  
   discrete_scale(
     aesthetics = "fill",
     scale_name = "random",
-    function (type = "seq", palette = 1, direction = 1) 
-{
-    pal <- pal_name(palette, type)
-    force(direction)
-    function(n) {
-        if (n < 3) {
-            pal <- suppressWarnings(RColorBrewer::brewer.pal(n, 
-                pal))
-        }
-        else {
-            pal <- RColorBrewer::brewer.pal(n, pal)
-        }
-        pal <- pal[seq_len(n)]
-        if (direction == -1) {
-            pal <- rev(pal)
-        }
-        pal
-    }
-},
+    palette_fn,
     ...
   )
 }
+
+p + scale_fill_random()
+
+scale_fill_random <- function(...) {
+  max_palette_colors <- c(RColorBrewer:::divnum, RColorBrewer:::qualnum, RColorBrewer:::seqnum)
+  palettes <- c(
+    imap(max_palette_colors, RColorBrewer::brewer.pal),
+    ggplot = list(scales::hue_pal()(12))
+  )
+  
+  palette <- sample(palettes, 1) %>% unlist()
+  palette_fn <- function(n) sample(palette, n, replace = TRUE)
+  palette_fn <- scales::brewer_pal("seq", 1, 1) # TEST
+  palette_fn <- function (n) { pal = scales:::pal_name(1, "seq")
+    if (n < 3) {
+        pal <- suppressWarnings(RColorBrewer::brewer.pal(n, pal))
+    }
+    else {
+        pal <- RColorBrewer::brewer.pal(n, pal)
+    }
+    pal <- pal[seq_len(n)]
+    pal
+}
+  
+  discrete_scale(
+    aesthetics = "fill",
+    scale_name = "random",
+    palette_fn,
+    ...
+  )
+}
+
+# p + scale_fill_brewer()
+p + scale_fill_random()
+
+
+scale_fill_brewer
+scales::brewer_pal
+scales::brewer_pal("seq", 1, 1)
 
 
 
@@ -61,7 +82,6 @@ discrete_scale(1)
 
 scales::hue_pal()(12)
 
-scale_fill_brewer
 ggplot2::discrete_scale
 
   
